@@ -1,0 +1,97 @@
+10
+
+dir
+2473
+http://xieyj@192.168.0.11:88/svn/Lianxi/trunk/Lianxi_Home/Lianxi/Lianxi/Calendar
+http://xieyj@192.168.0.11:88/svn/Lianxi
+
+
+
+2013-10-25T01:57:47.490485Z
+2316
+xieyj
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+7a7890b9-241e-45b1-bbb0-b9aad8ffe1a9
+
+test
+dir
+
+
+
+add
+
+calendar_signBg@2x.png
+file
+0
+
+
+add
+
+
+
+
+
+has-props
+has-prop-mods
+
+日历主页
+dir
+
+CalendarSyn
+dir
+
+头像展示
+dir
+
+发布
+dir
+
+XDCalendarDefine.h
+file
+0
+
+
+add
+
+ThirdPartyLibraries
+dir
+
+XDCalendarPicker.h
+file
+0
+
+
+add
+
+详情
+dir
+
+Custom Control
+dir
+
+ManagerCenter
+dir
+
+Picuters
+dir
+
+XDCalendarPicker.m
+file
+0
+
+
+add
+

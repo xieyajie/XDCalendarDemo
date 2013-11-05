@@ -1,0 +1,277 @@
+//
+//  NSDate+Convenience.m
+//  XDCalendar
+//
+//  Created by xieyajie on 13-3-19.
+//  Copyright (c) 2013年 xieyajie. All rights reserved.
+//
+
+static NSCalendar *_calendar = nil;
+static NSDateComponents *_components = nil;
+static NSDateComponents *_offsetComponents = nil;
+
+static NSDateFormatter *_dateFormatter1 = nil;
+static NSDateFormatter *_dateFormatter2 = nil;
+
+#import "NSDate+Convenience.h"
+
+@implementation NSDate (Convenience)
+
+
+#pragma mark - get methods
+
+- (NSCalendar *)calendar
+{
+    if (_calendar == nil) {
+        _calendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
+        /*
+         设定每周的第一天从星期几开始，比如:
+         .  如需设定从星期日开始，则value传入1
+         .  如需设定从星期一开始，则value传入2
+         */
+        [_calendar setFirstWeekday:2];
+    }
+    
+    return _calendar;
+}
+
+- (NSDateComponents *)offsetComponents
+{
+//    if (_offsetComponents != nil) {
+//        [_offsetComponents release];
+//    }
+    _offsetComponents = [[NSDateComponents alloc] init];
+    return _offsetComponents;
+}
+
+- (NSDateFormatter *)dateFormatter1
+{
+    if (_dateFormatter1 == nil) {
+        _dateFormatter1 = [[NSDateFormatter alloc] init];
+        _dateFormatter1.dateFormat = @"yyyyMMdd";
+    }
+    return _dateFormatter1;
+}
+
+- (NSDateFormatter *)dateFormatter2
+{
+    if (_dateFormatter2 == nil) {
+        _dateFormatter2 = [[NSDateFormatter alloc] init];
+        _dateFormatter2.dateFormat = @"yyyyMMdd hh:mm:ss";
+    }
+    return _dateFormatter2;
+}
+
+#pragma mark - set methods
+
+- (void)setComponents:(NSInteger)unitFlags
+{
+    _components = [[self calendar] components:unitFlags fromDate: self];
+}
+
+#pragma mark - public
+
+- (int)year
+{
+    [self setComponents:NSYearCalendarUnit];
+    return [_components year];
+}
+
+- (int)month
+{
+    [self setComponents:NSMonthCalendarUnit];
+    return [_components month];
+}
+
+- (int)day
+{
+    [self setComponents:NSDayCalendarUnit];
+    return [_components day];
+}
+
+- (int)week
+{
+    [self setComponents:NSWeekdayCalendarUnit ];
+    return [_components weekday];
+}
+
+- (int)hour
+{
+    [self setComponents:NSHourCalendarUnit];
+    return [_components hour];
+}
+
+- (int)countOfDaysInMonth
+{
+    NSRange rng = [[self calendar] rangeOfUnit: NSDayCalendarUnit inUnit: NSMonthCalendarUnit forDate: self];
+    NSUInteger number = rng.length;
+    return number;
+}
+
+- (int)countOfWeeksInMonth
+{
+    NSRange rng = [[self calendar] rangeOfUnit: NSWeekCalendarUnit inUnit: NSMonthCalendarUnit forDate: self];
+    NSUInteger number = rng.length;
+    return number;
+}
+
+- (NSDate *)firstDayOfMonth
+{
+    NSTimeInterval endDate;
+    NSDate *firstDay = nil;
+    [[self calendar] rangeOfUnit:NSMonthCalendarUnit startDate:&firstDay interval:&endDate forDate: self];
+    
+    return firstDay;
+}
+
+- (NSDate *)endDayOfMonth
+{
+    return [[self offsetMonth:1] offsetDay:-1];
+}
+
+- (int)firstWeekDayInMonth
+{
+    //Set date to first of month
+    [self setComponents: NSYearCalendarUnit | NSMonthCalendarUnit |  NSDayCalendarUnit];
+    [_components setDay:1];
+    NSDate *newDate = [_calendar dateFromComponents:_components];
+    
+    return [_calendar ordinalityOfUnit: NSWeekdayCalendarUnit inUnit:NSWeekCalendarUnit forDate:newDate];
+}
+
+- (int)weekInMonth
+{
+    [self setComponents:NSWeekOfMonthCalendarUnit];
+    NSInteger weekdayOrdinal = [_components weekOfMonth];
+    return weekdayOrdinal;
+}
+
+- (int)weekInYear
+{
+    [self setComponents:NSWeekOfYearCalendarUnit];
+    NSInteger weekdayOrdinal = [_components weekOfYear];
+    return weekdayOrdinal;
+}
+
+- (int)weekFromDate:(NSDate *)date
+{
+    if ([self year] == [date year]) {
+        return [self weekInYear];
+    }
+    else{
+        NSDate *sd = [[self offsetDay:1] convertToZeroInMorning];
+        NSDate *td = [date convertToZeroInMorning];
+        NSTimeInterval interval = fabs([td timeIntervalSinceDate:sd]);
+        long dayCount = interval / 86400;
+        if(fmod(interval, 7) != 0)
+        {
+            return (dayCount / 7) + 1;
+        }
+        else{
+            return dayCount / 7;
+        }
+    }
+}
+
+- (NSDate *)offsetMonth:(int)numMonths
+{
+    [[self offsetComponents] setMonth: numMonths];
+    
+    return [_calendar dateByAddingComponents:_offsetComponents toDate:self options:0];
+}
+
+-(NSDate *)offsetDay:(int)numDays
+{
+    [[self offsetComponents] setDay:numDays];
+    
+    return [_calendar dateByAddingComponents:_offsetComponents toDate:self options:0];
+}
+
+- (BOOL)isEqualToDate: (NSDate *)aDate
+{
+    if ([self year] == [aDate year] && [self month] == [aDate month] && [self day] == [aDate day])
+    {
+        return YES;
+    }
+    else{
+        return NO;
+    }
+}
+
+- (NSInteger)compareWithDate: (NSDate *)aDate
+{
+    if (aDate == nil) {
+        return -1;
+    }
+    
+    int cYear = [self year];
+    int aYear = [aDate year];
+    if (cYear > aYear)
+    {
+        return XDDateComparePlurality;
+    }
+    else if (cYear < aYear)
+    {
+        return XDDateCompareSmaller;
+    }
+    else{
+        int cMonth = [self month];
+        int aMonth = [aDate month];
+        
+        if (cMonth > aMonth)
+        {
+            return XDDateComparePlurality;
+        }
+        else if (cMonth < aMonth)
+        {
+            return XDDateCompareSmaller;
+        }
+        else{
+            int cDay = [self day];
+            int aDay = [aDate day];
+            if (cDay > aDay)
+            {
+                return XDDateComparePlurality;
+            }
+            else if (cDay < aDay)
+            {
+                return XDDateCompareSmaller;
+            }
+            else{
+                return XDDateCompareEqual;
+            }
+        }
+    }
+}
+
+- (NSDate *)fristDateOfYear
+{
+    int month = [self month];
+    return [[self offsetMonth:(1 - month)] firstDayOfMonth];
+}
+
+- (NSDate *)endDateOfYear
+{
+    int month = [self month];
+    return [[[self offsetMonth:(13 - month)] firstDayOfMonth] offsetDay:-1];
+}
+
+- (NSDate *)convertToZeroInMorning
+{
+    NSString *timeStr = [NSString stringWithFormat:@"%@ %@", [[self dateFormatter1] stringFromDate: self], @"00:00:00"];
+    return [[self dateFormatter2] dateFromString:timeStr];
+}
+
+- (NSString *)stringFromDateByYMD
+{
+    return [[self dateFormatter1] stringFromDate:self];
+}
+
+//将date转为年月日的int型
+- (NSInteger)convertToInt
+{
+    NSString *str = [[NSString alloc] initWithFormat:@"%i%i%i",[self year],[self month],[self day]];
+    return [str integerValue];
+}
+
+@end
