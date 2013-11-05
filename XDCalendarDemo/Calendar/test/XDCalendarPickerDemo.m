@@ -10,6 +10,7 @@
 #import "XDCalendarPickerDemo.h"
 
 #import "NSDate+Convenience.h"
+#import "XDWeekCell.h"
 
 #define kSignViewHeight 25
 #define kCalendarPickerOneWeekHeight 69
@@ -158,6 +159,7 @@ CGFloat g_pickerDayWidth_ = kCalendarDayBlockWidth;
         _tableView.dataSource = self;
         _tableView.rowHeight = kCalendarDayBlockHeight;
         _tableView.backgroundColor = [UIColor colorWithRed:220 / 255.0 green:220 / 255.0 blue:220 / 255.0 alpha:1.0];
+//        _tableView.backgroundColor = [UIColor lightGrayColor];
     }
     
     return _tableView;
@@ -186,21 +188,39 @@ CGFloat g_pickerDayWidth_ = kCalendarDayBlockWidth;
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
     // Return the number of sections.
-    return 0;
+    return 1;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     // Return the number of rows in the section.
-    return 0;
+    NSTimeInterval interval = [_endShowDate timeIntervalSinceDate: _startShowDate];
+    long dayCount = interval / 86400;
+    if(fmod(interval, 7) != 0)
+    {
+        return (dayCount / 7) + 1;
+    }
+    else{
+        return dayCount / 7;
+    }
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    static NSString *CellIdentifier = @"Cell";
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+    static NSString *CellIdentifier = @"CalendarPickerCell";
+    XDWeekCell *cell = (XDWeekCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     
     // Configure the cell...
+    if (cell == nil) {
+        cell = [[XDWeekCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
+        cell.backgroundColor = [UIColor clearColor];
+    }
+    
+    int row = indexPath.row;
+    cell.tag = row;
+    [cell setMondayDate:[_startShowDate offsetDay:(7 * row)]];
+    cell.editing = tableView.editing;
+    cell.selectionStyle = UITableViewCellSelectionStyleNone;
     
     return cell;
 }

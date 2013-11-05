@@ -11,6 +11,6 @@
 @class XDDay;
 @interface XDActivityDay : NSObject
 
-@property (strong, nonatomic) XDDay *activityDay;
+@property (strong, nonatomic) XDDay *day;
 
 @end

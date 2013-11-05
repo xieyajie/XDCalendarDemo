@@ -16,20 +16,20 @@
 {
     self = [super init];
     if (self) {
-        _activityDay = nil;
+        _day = nil;
     }
     
     return self;
 }
 
-- (void)setActivityDay:(XDDay *)activity
+- (void)setDay:(XDDay *)activity
 {
-    if (_activityDay != activity) {
-        if (_activityDay != nil) {
+    if (_day != activity) {
+        if (_day != nil) {
             //????
         }
         
-        _activityDay = activity;
+        _day = activity;
     }
 }
 
