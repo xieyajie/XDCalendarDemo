@@ -41,24 +41,18 @@
     // Configure the view for the selected state
 }
 
-- (void)setEditing:(BOOL)editing
-{
-    [super setEditing:editing];
-    [self setDaysEditing:editing];
-}
-
 - (void)setScrolling:(BOOL)scrolling
 {
-    [self setDaysEditing:scrolling];
+    [self setDaysScrolling:scrolling];
 }
 
 #pragma mark - private
 
-- (void)setDaysEditing:(BOOL)isEditing
+- (void)setDaysScrolling:(BOOL)isScrolling
 {
     for (int i = 0; i < 7; i++) {
         XDDay *block = [_daysArray objectAtIndex:i];
-        block.editing = isEditing;
+        block.scrolling = isScrolling;
     }
 }
 

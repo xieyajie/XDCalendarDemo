@@ -24,7 +24,6 @@ typedef enum
 @synthesize dateLabel = _dateLabel;
 @synthesize ownDotLabel = _ownDotLabel;
 @synthesize friendDotLabel = _friendDotLabel;
-@synthesize editing = _editing;
 
 - (id)initWithFrame:(CGRect)frame
 {
@@ -57,10 +56,10 @@ typedef enum
 
 #pragma mark - set
 
-- (void)setEditing:(BOOL)isEditing
+- (void)setScrolling:(BOOL)isScrolling
 {
-    _editing = isEditing;
-    XDDayBlockState state = _editing ? XDDayBlockStateMoving : XDDayBlockStateNoraml;
+    _scrolling = isScrolling;
+    XDDayBlockState state = _scrolling ? XDDayBlockStateMoving : XDDayBlockStateNoraml;
     [self setState:state];
 }
 
@@ -70,19 +69,15 @@ typedef enum
     BOOL prevSelected = self.selected;
     
     if ([self.blockDate day] == 1) {
-//        self.titleLabel.font = [UIFont systemFontOfSize: 14.0];
         self.dateLabel.font = [UIFont systemFontOfSize: 14.0];
         int month = [self.blockDate month] - 1;
         NSArray *chineseMonths = [NSArray arrayWithObjects: @"一月", @"二月", @"三月", @"四月", @"五月", @"六月", @"七月", @"八月", @"九月", @"十月", @"十一月", @"十二月", nil];
         NSString *title = [NSString stringWithFormat:@"%@\n1", [chineseMonths objectAtIndex:month]];
-//        [self setTitle:title forState:UIControlStateNormal];
         self.dateLabel.text = title;
     }
     else{
-//        self.titleLabel.font = [UIFont systemFontOfSize: 18.0];
         self.dateLabel.font = [UIFont systemFontOfSize: 18.0];
         NSString *dayDate = [NSString stringWithFormat:@"%i", [self.blockDate day]];
-//        [self setTitle:dayDate forState:UIControlStateNormal];
         self.dateLabel.text = dayDate;
     }
 
@@ -93,7 +88,6 @@ typedef enum
     if ([aDate isEqualToDate:highlightDate]) {
         if (!prevSelected) {
             self.selected = YES;
-//            [[[XDCalendarPickerController shareController] highlightDay] setSelected:NO];
             [[XDCalendarPickerController shareController] setHighlightDay:self];
         }
     }

@@ -245,6 +245,31 @@
     }
 }
 
+//- (void)tableViewBeginRefreshWithCompletion:(void (^)(BOOL finished))completion
+//{
+//    if (_showHeaderPulling) {
+//        if(_headerPullingView.loading)
+//        {
+//            _headerPullingView.loading = NO;
+//            [_headerPullingView setState:XDStateNormal animated:NO];
+//            
+//            NSDate *date = [NSDate date];
+//            if (_pullDelegate && [_pullDelegate respondsToSelector:@selector(pullingTableViewRefreshingFinishedDate)]) {
+//                [_pullDelegate pullingTableViewRefreshingFinishedDate];
+//            }
+//            [_headerPullingView updateRefreshDate:date];
+//            
+//            [UIView animateWithDuration:0.5f delay:0 options:UIViewAnimationOptionCurveEaseOut animations:^{
+//                self.contentInset = UIEdgeInsetsMake(0, 0, 0, 0);
+//            } completion:^(BOOL finish){
+//                dispatch_async(dispatch_get_main_queue(), ^{
+//                    completion(finish);
+//                });
+//            }];
+//        }
+//    }
+//}
+
 - (void)tableViewDidFinishedRefreshWithCompletion:(void (^)(BOOL finished))completion
 {
     if (_showHeaderPulling) {
@@ -261,6 +286,7 @@
             
             [UIView animateWithDuration:0.5f delay:0 options:UIViewAnimationOptionCurveEaseOut animations:^{
                 self.contentInset = UIEdgeInsetsMake(0, 0, 0, 0);
+//                self.contentOffset = CGPointMake(0.0, 0.0);
             } completion:^(BOOL finish){
                 dispatch_async(dispatch_get_main_queue(), ^{
                     completion(finish);

@@ -80,6 +80,7 @@
 		3A18B7241828F62100F1192F /* calendar_todaySign_selected@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3A18B6F21828F62100F1192F /* calendar_todaySign_selected@2x.png */; };
 		3A18B7251828F62100F1192F /* navi_item.png in Resources */ = {isa = PBXBuildFile; fileRef = 3A18B6F31828F62100F1192F /* navi_item.png */; };
 		3A18B7261828F62100F1192F /* navi_item@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3A18B6F41828F62100F1192F /* navi_item@2x.png */; };
+		3A8C96C6182A416900FC6B54 /* XDCalendarShare.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A8C96C5182A416900FC6B54 /* XDCalendarShare.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -182,6 +183,8 @@
 		3A18B6F21828F62100F1192F /* calendar_todaySign_selected@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "calendar_todaySign_selected@2x.png"; sourceTree = "<group>"; };
 		3A18B6F31828F62100F1192F /* navi_item.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = navi_item.png; sourceTree = "<group>"; };
 		3A18B6F41828F62100F1192F /* navi_item@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "navi_item@2x.png"; sourceTree = "<group>"; };
+		3A8C96C4182A416900FC6B54 /* XDCalendarShare.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XDCalendarShare.h; sourceTree = "<group>"; };
+		3A8C96C5182A416900FC6B54 /* XDCalendarShare.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XDCalendarShare.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -327,6 +330,8 @@
 			children = (
 				3A18B6B21828920B00F1192F /* XDCalendarPickerDemo.h */,
 				3A18B6B31828920B00F1192F /* XDCalendarPickerDemo.m */,
+				3A8C96C4182A416900FC6B54 /* XDCalendarShare.h */,
+				3A8C96C5182A416900FC6B54 /* XDCalendarShare.m */,
 			);
 			path = test;
 			sourceTree = "<group>";
@@ -550,6 +555,7 @@
 				3A18B6A818288F9C00F1192F /* XDPullingView.m in Sources */,
 				3A18B6B41828920B00F1192F /* XDCalendarPickerDemo.m in Sources */,
 				3A18B6AA18288F9C00F1192F /* XDCalendarPicker.m in Sources */,
+				3A8C96C6182A416900FC6B54 /* XDCalendarShare.m in Sources */,
 				3A18B6AD18288F9C00F1192F /* XDWeekCell.m in Sources */,
 				3A18B6AB18288F9C00F1192F /* XDCalendarPickerController.m in Sources */,
 				3A18B52C18288EDF00F1192F /* XDAppDelegate.m in Sources */,

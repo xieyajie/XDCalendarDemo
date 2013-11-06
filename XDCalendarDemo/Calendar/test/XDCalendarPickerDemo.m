@@ -14,6 +14,7 @@
 
 #import "XDDay.h"
 #import "XDWeekCell.h"
+#import "XDRefreshTableView.h"
 
 #define kSignViewHeight 25
 #define kCalendarPickerOneWeekHeight 69
@@ -23,7 +24,7 @@
 
 CGFloat g_pickerDayWidth_ = kCalendarDayBlockWidth;
 
-@interface XDCalendarPickerDemo ()<UITableViewDataSource, UITableViewDelegate>
+@interface XDCalendarPickerDemo ()<UITableViewDataSource, UITableViewDelegate, XDRefreshTableViewDelegate>
 {
     NSIndexPath *_scrollToIndex;
     CGPoint _previousOffSet; //tableView上一次开始滑动的偏移量，用以判断是上划还是下划
@@ -31,7 +32,7 @@ CGFloat g_pickerDayWidth_ = kCalendarDayBlockWidth;
 
 @property (strong, nonatomic) UIView *shadowView;//背景阴影层
 @property (strong, nonatomic) UIView *weekSignView;
-@property (strong, nonatomic) UITableView *tableView;
+@property (strong, nonatomic) XDRefreshTableView *tableView;
 @property (strong, nonatomic) UILabel *ymLable; //滚动时显示年月的标签
 
 @property (strong, nonatomic) XDDay *activityDay;//处于选中状态的日期button
@@ -51,8 +52,7 @@ CGFloat g_pickerDayWidth_ = kCalendarDayBlockWidth;
         if (date == nil) {
             date = [NSDate date];
         }
-        _selectedDate = date;
-        _highlightDate = date;
+        self.selectedDate = date;
         
         self.view.frame = CGRectMake(point.x, point.y, 320, kCalendarPickerOneWeekHeight);
         
@@ -90,7 +90,7 @@ CGFloat g_pickerDayWidth_ = kCalendarDayBlockWidth;
     if ([object isKindOfClass:[XDDay class]])
     {
         XDDay *selectedDay = (XDDay *)object;
-        _selectedDate = selectedDay.blockDate;
+        self.selectedDate = selectedDay.blockDate;
         self.activityDay = selectedDay;
     }
 }
@@ -123,9 +123,7 @@ CGFloat g_pickerDayWidth_ = kCalendarDayBlockWidth;
             self.view.frame = CGRectMake(rect.origin.x, rect.origin.y, rect.size.width, height);
             self.tableView.frame = CGRectMake(0, kSignViewHeight, self.view.frame.size.width, self.view.frame.size.height - kSignViewHeight);
         } completion:^(BOOL finish){
-            if (_style == XDCalendarStyleOneWeek) {
-//                [self scrollToDate:_controller.selectedDate];//滚动到选中项所在的行
-            }
+            [self activityDate:_selectedDate withRequest:YES];//滚动到选中项所在的行
         }];
     }
 }
@@ -143,6 +141,14 @@ CGFloat g_pickerDayWidth_ = kCalendarDayBlockWidth;
         }
         
         _activityDay = day;
+    }
+}
+
+- (void)setSelectedDate:(NSDate *)date
+{
+    if (![_selectedDate isEqualToDate:[date convertToZeroInMorning]]) {
+        _selectedDate = date;
+        
         if (_delegate && [_delegate respondsToSelector:@selector(calendarPicker:selectedDate:)]) {
             [_delegate calendarPicker:self selectedDate:_activityDay.blockDate];
         }
@@ -184,11 +190,11 @@ CGFloat g_pickerDayWidth_ = kCalendarDayBlockWidth;
     return _weekSignView;
 }
 
-- (UITableView *)tableView
+- (XDRefreshTableView *)tableView
 {
     if (_tableView == nil) {
-//        _tableView = [[XDRefreshTableView alloc] initWithFrame:CGRectMake(0, kSignViewHeight, 320, kCalendarDayBlockHeight) style:UITableViewStylePlain pullDelegate: _controller];
-        _tableView = [[UITableView alloc] initWithFrame:CGRectZero style:UITableViewStylePlain];
+        _tableView = [[XDRefreshTableView alloc] initWithFrame:CGRectMake(0, kSignViewHeight, 320, kCalendarDayBlockHeight) style:UITableViewStylePlain pullDelegate: self];
+//        _tableView = [[UITableView alloc] initWithFrame:CGRectZero style:UITableViewStylePlain];
         _tableView.delegate = self;
         _tableView.dataSource = self;
         _tableView.rowHeight = kCalendarDayBlockHeight;
@@ -286,7 +292,7 @@ CGFloat g_pickerDayWidth_ = kCalendarDayBlockWidth;
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
-//    [self.tableView tableViewDidScroll:scrollView];
+    [self.tableView tableViewDidScroll:scrollView];
 }
 
 - (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate
@@ -295,7 +301,7 @@ CGFloat g_pickerDayWidth_ = kCalendarDayBlockWidth;
         [self stopScrollingAtOffset:scrollView.contentOffset];
     }
     
-//    [self.tableView tableViewDidEndDragging:scrollView];
+    [self.tableView tableViewDidEndDragging:scrollView];
 }
 
 
@@ -309,6 +315,19 @@ CGFloat g_pickerDayWidth_ = kCalendarDayBlockWidth;
 - (void)scrollViewDidEndScrollingAnimation:(UIScrollView *)scrollView
 {
     [self hideTagLabel];
+}
+
+#pragma mark - Refresh Delegate
+//下拉加载上一年
+- (void)pullingTableViewDidStartRefreshing:(XDRefreshTableView *)tableView
+{
+    [self performSelector:@selector(loadPrevYear) withObject:nil afterDelay:0.5f];
+}
+
+//上拉加载下一年
+- (void)pullingTableViewDidStartLoading:(XDRefreshTableView *)tableView
+{
+    [self performSelector:@selector(loadNextYear) withObject:nil afterDelay:0.5f];
 }
 
 #pragma mark - layout subviews
@@ -372,6 +391,22 @@ CGFloat g_pickerDayWidth_ = kCalendarDayBlockWidth;
     };
 }
 
+- (void)loadPrevYear
+{
+    [self calculateStartDate:[_startShowDate offsetDay:-1]];
+    [self.tableView reloadData];
+    
+    [self.tableView tableViewDidFinishedRefreshWithCompletion:^(BOOL finish){
+        
+//        [self requestCalendarDots];
+    }];
+}
+
+- (void)loadNextYear
+{
+    
+}
+
 #pragma mark - tableView 
 
 - (void)stopScrollingAtOffset:(CGPoint)offset
@@ -410,6 +445,35 @@ CGFloat g_pickerDayWidth_ = kCalendarDayBlockWidth;
     self.ymLable.text = [NSString stringWithFormat:@"%i\n%@", [date year], [_chineseMonths objectAtIndex:month]];
 }
 
+#pragma mark - tools
+
+//判断时间是否在当前时间范围内
+- (void)judgmentDate:(NSDate *)date inTimeRangeOfTableView:(UITableView *)tableView
+{
+    if ([date compare:_startShowDate] == NSOrderedAscending) {
+        [self calculateStartDate:date];
+    }
+    else if ([date compare:_endShowDate] == NSOrderedDescending)
+    {
+        [self calculateEndDate:date];
+    }
+    
+    [self.tableView reloadData];
+}
+
+//判断要滚动到的行是否已在tableView上
+- (BOOL)judgmentVisibledAtIndexPath:(NSIndexPath *)indexPath inTableView:(UITableView *)tableView
+{
+    NSArray *indexPaths = [self.tableView indexPathsForVisibleRows];
+    for (NSIndexPath *path in indexPaths) {
+        if ([path section] == [indexPath section] && [path row] == [indexPath row]) {
+            return YES;
+        }
+    }
+    
+    return NO;
+}
+
 #pragma mark - public
 
 - (CGFloat)heightForStyle:(XDCalendarStyle)style
@@ -441,6 +505,37 @@ CGFloat g_pickerDayWidth_ = kCalendarDayBlockWidth;
 - (void)removeFromSuperview
 {
     [self.view removeFromSuperview];
+}
+
+- (void)activityDate:(NSDate *)date withRequest:(BOOL)isRequest
+{
+    BOOL isCanScroll = self.tableView.scrollEnabled;
+    if(!isCanScroll)
+    {
+        self.tableView.scrollEnabled = YES;
+    }
+    
+    NSDate *activityDate = [date convertToZeroInMorning];
+    [self judgmentDate:activityDate inTimeRangeOfTableView:self.tableView];
+    int toRow = [activityDate weekFromDate:_startShowDate] - 1;
+    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:toRow inSection:0];
+    
+    XDWeekCell *cell = (XDWeekCell *)[self.tableView cellForRowAtIndexPath:indexPath];
+    XDDay *day = [cell dayBlockForDate:activityDate];
+    if (day) {
+        self.activityDay = day;
+        day.selected = YES;
+    }
+    
+    if (![self judgmentVisibledAtIndexPath:indexPath inTableView:self.tableView]) {
+        [self.tableView scrollToRowAtIndexPath:indexPath atScrollPosition:UITableViewScrollPositionTop animated:YES];
+    }
+    
+    self.tableView.scrollEnabled = isCanScroll;
+    
+    if (isRequest) {
+        self.selectedDate = activityDate;
+    }
 }
 
 

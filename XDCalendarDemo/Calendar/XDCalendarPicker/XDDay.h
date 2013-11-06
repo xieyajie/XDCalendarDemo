@@ -18,7 +18,7 @@
 
 @property (nonatomic, strong) UILabel *friendDotLabel;
 
-@property (nonatomic, assign, setter = setEditing:) BOOL editing;
+@property (nonatomic, assign) BOOL scrolling;
 
 //@property (nonatomic, assign, setter = setState:) XDDayBlockState state;
 
