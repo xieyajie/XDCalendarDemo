@@ -14,21 +14,23 @@ typedef enum
     XDCalendarStyleDays
 }XDCalendarStyle;
 
+@protocol XDCalendarPickerDelegate;
 @interface XDCalendarPickerDemo : UIViewController
 {
     XDCalendarStyle _style;
-    NSDate *_startShowDate;
-    NSDate *_endShowDate;
     
     NSArray *_chineseMonths;//中文月份
     NSArray *_weekSigns;//中文星期
-    
-    
 }
+
+@property (nonatomic) id<XDCalendarPickerDelegate> delegate;
 
 @property (nonatomic) XDCalendarStyle style;
 //是否显示背景阴影层
 @property (nonatomic) BOOL showBackgroundShadow;
+
+@property (readonly, nonatomic) NSDate *startShowDate;
+@property (readonly, nonatomic) NSDate *endShowDate;
 
 @property (readonly, nonatomic) NSDate *selectedDate;
 @property (readonly, nonatomic) NSDate *highlightDate;
@@ -42,5 +44,13 @@ typedef enum
 - (CGFloat)heightForStyle:(XDCalendarStyle)style;
 
 - (void)showInView:(UIView *)view;
+- (void)removeFromSuperview;
+
+@end
+
+@protocol XDCalendarPickerDelegate <NSObject>
+
+@required
+- (void)calendarPicker:(XDCalendarPickerDemo *)calendarPicker selectedDate:(NSDate *)date;
 
 @end

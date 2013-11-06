@@ -30,7 +30,6 @@
 		3A18B6B41828920B00F1192F /* XDCalendarPickerDemo.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A18B6B31828920B00F1192F /* XDCalendarPickerDemo.m */; };
 		3A18B6BB1828926400F1192F /* NSDate+Convenience.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A18B6B71828926400F1192F /* NSDate+Convenience.m */; };
 		3A18B6BC1828926400F1192F /* UIColor+Category.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A18B6B91828926400F1192F /* UIColor+Category.m */; };
-		3A18B6BF1828E51500F1192F /* XDActivityDay.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A18B6BE1828E51500F1192F /* XDActivityDay.m */; };
 		3A18B6F51828F62100F1192F /* backBg.png in Resources */ = {isa = PBXBuildFile; fileRef = 3A18B6C31828F62100F1192F /* backBg.png */; };
 		3A18B6F61828F62100F1192F /* backBg@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3A18B6C41828F62100F1192F /* backBg@2x.png */; };
 		3A18B6F71828F62100F1192F /* calendar_blockFutureBg.png in Resources */ = {isa = PBXBuildFile; fileRef = 3A18B6C51828F62100F1192F /* calendar_blockFutureBg.png */; };
@@ -133,8 +132,6 @@
 		3A18B6B81828926400F1192F /* UIColor+Category.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+Category.h"; sourceTree = "<group>"; };
 		3A18B6B91828926400F1192F /* UIColor+Category.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+Category.m"; sourceTree = "<group>"; };
 		3A18B6BA1828926400F1192F /* XDCalendarDefine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XDCalendarDefine.h; sourceTree = "<group>"; };
-		3A18B6BD1828E51500F1192F /* XDActivityDay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XDActivityDay.h; sourceTree = "<group>"; };
-		3A18B6BE1828E51500F1192F /* XDActivityDay.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XDActivityDay.m; sourceTree = "<group>"; };
 		3A18B6C31828F62100F1192F /* backBg.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = backBg.png; sourceTree = "<group>"; };
 		3A18B6C41828F62100F1192F /* backBg@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "backBg@2x.png"; sourceTree = "<group>"; };
 		3A18B6C51828F62100F1192F /* calendar_blockFutureBg.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = calendar_blockFutureBg.png; sourceTree = "<group>"; };
@@ -330,8 +327,6 @@
 			children = (
 				3A18B6B21828920B00F1192F /* XDCalendarPickerDemo.h */,
 				3A18B6B31828920B00F1192F /* XDCalendarPickerDemo.m */,
-				3A18B6BD1828E51500F1192F /* XDActivityDay.h */,
-				3A18B6BE1828E51500F1192F /* XDActivityDay.m */,
 			);
 			path = test;
 			sourceTree = "<group>";
@@ -564,7 +559,6 @@
 				3A18B53218288EDF00F1192F /* XDViewController.m in Sources */,
 				3A18B6BB1828926400F1192F /* NSDate+Convenience.m in Sources */,
 				3A18B6BC1828926400F1192F /* UIColor+Category.m in Sources */,
-				3A18B6BF1828E51500F1192F /* XDActivityDay.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

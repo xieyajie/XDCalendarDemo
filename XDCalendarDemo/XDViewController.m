@@ -42,7 +42,7 @@
 - (XDCalendarPickerDemo *)calendarPicker
 {
     if (_calendarPicker == nil) {
-        _calendarPicker = [[XDCalendarPickerDemo alloc] initWithPoint:CGPointMake(0, 20) calendarStyle:XDCalendarStyleOneWeek selectedDate:[NSDate date]];
+        _calendarPicker = [[XDCalendarPickerDemo alloc] initWithPoint:CGPointMake(0, 20) calendarStyle:XDCalendarStyleDays selectedDate:[NSDate date]];
     }
     
     return _calendarPicker;

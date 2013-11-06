@@ -10,6 +10,9 @@
 #import "XDCalendarPickerDemo.h"
 
 #import "NSDate+Convenience.h"
+#import "XDCalendarDefine.h"
+
+#import "XDDay.h"
 #import "XDWeekCell.h"
 
 #define kSignViewHeight 25
@@ -27,6 +30,8 @@ CGFloat g_pickerDayWidth_ = kCalendarDayBlockWidth;
 @property (strong, nonatomic) UITableView *tableView;
 @property (strong, nonatomic) UILabel *ymLable; //滚动时显示年月的标签
 
+@property (strong, nonatomic) XDDay *activityDay;//处于选中状态的日期button
+
 @end
 
 @implementation XDCalendarPickerDemo
@@ -36,7 +41,7 @@ CGFloat g_pickerDayWidth_ = kCalendarDayBlockWidth;
     self = [super init];
     if (self) {
         // Initialization code
-        _style = style;
+        _style = -1;
         
         if (date == nil) {
             date = [NSDate date];
@@ -44,17 +49,12 @@ CGFloat g_pickerDayWidth_ = kCalendarDayBlockWidth;
         _selectedDate = date;
         _highlightDate = date;
         
-        CGFloat height = 0;
-        if (_style == XDCalendarStyleOneWeek) {
-            height = kCalendarPickerOneWeekHeight;
-        }
-        else{
-            height = kCalendarPickerDaysMaxHeight;
-        }
-        self.view.frame = CGRectMake(point.x, point.y, 320, height);
+        self.view.frame = CGRectMake(point.x, point.y, 320, kCalendarPickerOneWeekHeight);
         
         _chineseMonths = [[NSArray alloc] initWithObjects: @"一月", @"二月", @"三月", @"四月", @"五月", @"六月", @"七月", @"八月", @"九月", @"十月", @"十一月", @"十二月", nil];
         _weekSigns = [[NSArray alloc] initWithObjects: @"周一", @"周二", @"周三", @"周四", @"周五", @"周六", @"周日", nil];
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(selectedFromBlock:) name:kNotificationDateSelectedFromBlock object:nil];
         
         [self setStyle:style];
         [self configationDate];
@@ -73,6 +73,21 @@ CGFloat g_pickerDayWidth_ = kCalendarDayBlockWidth;
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+#pragma mark - notification
+
+//XDDay 触发UIControlStateSelected
+- (void)selectedFromBlock:(NSNotification *)notification
+{
+    id object = [notification object];
+    
+    if ([object isKindOfClass:[XDDay class]])
+    {
+        XDDay *selectedDay = (XDDay *)object;
+        _selectedDate = selectedDay.blockDate;
+        self.activityDay = selectedDay;
+    }
 }
 
 #pragma mark - setting
@@ -101,7 +116,7 @@ CGFloat g_pickerDayWidth_ = kCalendarDayBlockWidth;
         [UIView animateWithDuration:.1f animations:^{
             CGRect rect = self.view.frame;
             self.view.frame = CGRectMake(rect.origin.x, rect.origin.y, rect.size.width, height);
-//            _tableView.frame = CGRectMake(0, kSignViewHeight, self.frame.size.width, self.frame.size.height - kSignViewHeight);
+            self.tableView.frame = CGRectMake(0, kSignViewHeight, self.view.frame.size.width, self.view.frame.size.height - kSignViewHeight);
         } completion:^(BOOL finish){
             if (_style == XDCalendarStyleOneWeek) {
 //                [self scrollToDate:_controller.selectedDate];//滚动到选中项所在的行
@@ -113,6 +128,20 @@ CGFloat g_pickerDayWidth_ = kCalendarDayBlockWidth;
 - (void)setShowBackgroundShadow:(BOOL)showBackgroundShadow
 {
     
+}
+
+- (void)setActivityDay:(XDDay *)day
+{
+    if (_activityDay != day) {
+        if (_activityDay != nil) {
+            _activityDay.selected = NO;
+        }
+        
+        _activityDay = day;
+        if (_delegate && [_delegate respondsToSelector:@selector(calendarPicker:selectedDate:)]) {
+            [_delegate calendarPicker:self selectedDate:_activityDay.blockDate];
+        }
+    }
 }
 
 #pragma mark - getting
@@ -154,12 +183,11 @@ CGFloat g_pickerDayWidth_ = kCalendarDayBlockWidth;
 {
     if (_tableView == nil) {
 //        _tableView = [[XDRefreshTableView alloc] initWithFrame:CGRectMake(0, kSignViewHeight, 320, kCalendarDayBlockHeight) style:UITableViewStylePlain pullDelegate: _controller];
-        _tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, self.weekSignView.frame.origin.y + self.weekSignView.frame.size.height, self.view.frame.size.width, self.view.frame.size.height - (self.weekSignView.frame.origin.y + self.weekSignView.frame.size.height)) style:UITableViewStylePlain];
+        _tableView = [[UITableView alloc] initWithFrame:CGRectZero style:UITableViewStylePlain];
         _tableView.delegate = self;
         _tableView.dataSource = self;
         _tableView.rowHeight = kCalendarDayBlockHeight;
         _tableView.backgroundColor = [UIColor colorWithRed:220 / 255.0 green:220 / 255.0 blue:220 / 255.0 alpha:1.0];
-//        _tableView.backgroundColor = [UIColor lightGrayColor];
     }
     
     return _tableView;
@@ -299,6 +327,11 @@ CGFloat g_pickerDayWidth_ = kCalendarDayBlockWidth;
 //    }
     
     [view addSubview:self.view];
+}
+
+- (void)removeFromSuperview
+{
+    [self.view removeFromSuperview];
 }
 
 
