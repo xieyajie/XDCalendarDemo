@@ -1,5 +1,5 @@
 //
-//  XDCalendarShare.h
+//  XDCalendarCenter.h
 //  XDCalendarDemo
 //
 //  Created by xieyajie on 13-11-6.
@@ -8,6 +8,10 @@
 
 #import <Foundation/Foundation.h>
 
-@interface XDCalendarShare : NSObject
+@interface XDCalendarCenter : NSObject
+
++ (id)defaultCenter;
+
+@property (nonatomic, strong) NSDate *activityDate;
 
 @end

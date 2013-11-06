@@ -10,6 +10,7 @@
 #import "XDCalendarPickerDemo.h"
 
 #import "NSDate+Convenience.h"
+#import "XDCalendarCenter.h"
 #import "XDCalendarDefine.h"
 
 #import "XDDay.h"
@@ -26,8 +27,9 @@ CGFloat g_pickerDayWidth_ = kCalendarDayBlockWidth;
 
 @interface XDCalendarPickerDemo ()<UITableViewDataSource, UITableViewDelegate, XDRefreshTableViewDelegate>
 {
-    NSIndexPath *_scrollToIndex;
     CGPoint _previousOffSet; //tableView上一次开始滑动的偏移量，用以判断是上划还是下划
+    
+    XDCalendarCenter *_calendarCenter;
 }
 
 @property (strong, nonatomic) UIView *shadowView;//背景阴影层
