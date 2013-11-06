@@ -24,6 +24,10 @@
 CGFloat g_pickerDayWidth_ = kCalendarDayBlockWidth;
 
 @interface XDCalendarPickerDemo ()<UITableViewDataSource, UITableViewDelegate>
+{
+    NSIndexPath *_scrollToIndex;
+    CGPoint _previousOffSet; //tableView上一次开始滑动的偏移量，用以判断是上划还是下划
+}
 
 @property (strong, nonatomic) UIView *shadowView;//背景阴影层
 @property (strong, nonatomic) UIView *weekSignView;
@@ -42,6 +46,7 @@ CGFloat g_pickerDayWidth_ = kCalendarDayBlockWidth;
     if (self) {
         // Initialization code
         _style = -1;
+        _isScrolling = NO;
         
         if (date == nil) {
             date = [NSDate date];
@@ -247,10 +252,63 @@ CGFloat g_pickerDayWidth_ = kCalendarDayBlockWidth;
     int row = indexPath.row;
     cell.tag = row;
     [cell setMondayDate:[_startShowDate offsetDay:(7 * row)]];
-    cell.editing = tableView.editing;
+    cell.scrolling = _isScrolling;
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
     
+    if (_isScrolling) {
+        NSArray *cellArray = [tableView visibleCells];
+        if (cellArray.count != 0) {
+            XDWeekCell *tmpCell = [cellArray objectAtIndex:(cellArray.count / 2)];
+            if (tmpCell != nil) {
+                [self setTagLabelTextWithDate:tmpCell.mondayDate];
+            }
+        }
+    }
+    
     return cell;
+}
+
+#pragma mark - scroll delegate
+
+- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView
+{
+    CGFloat height = scrollView.contentSize.height < scrollView.frame.size.height ? scrollView.frame.size.height : scrollView.contentSize.height;
+    if (scrollView.contentOffset.y >= 0 && scrollView.contentOffset.y <= height - scrollView.frame.size.height) {
+        _isScrolling = YES;
+        NSArray *visibles = [self.tableView visibleCells];
+        for (XDWeekCell *cell in visibles) {
+            cell.scrolling = YES;
+        }
+        
+        [self showTagLabel];
+    }
+}
+
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView
+{
+//    [self.tableView tableViewDidScroll:scrollView];
+}
+
+- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate
+{
+    if (!decelerate) {
+        [self stopScrollingAtOffset:scrollView.contentOffset];
+    }
+    
+//    [self.tableView tableViewDidEndDragging:scrollView];
+}
+
+
+- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
+{
+    if (!scrollView.decelerating && !scrollView.dragging) {
+        [self stopScrollingAtOffset:scrollView.contentOffset];
+    }
+}
+
+- (void)scrollViewDidEndScrollingAnimation:(UIScrollView *)scrollView
+{
+    [self hideTagLabel];
 }
 
 #pragma mark - layout subviews
@@ -267,6 +325,19 @@ CGFloat g_pickerDayWidth_ = kCalendarDayBlockWidth;
     
     [self.view addSubview:self.weekSignView];
     [self.view addSubview:self.tableView];
+}
+
+- (void)showTagLabel
+{
+    self.ymLable.frame = CGRectMake((320 - 50) / 2, self.tableView.frame.origin.y + (self.tableView.frame.size.height - 50) / 2, 50, 50);
+    [self.view addSubview:self.ymLable];
+    self.ymLable.hidden = NO;
+}
+
+- (void)hideTagLabel
+{
+    self.ymLable.hidden = YES;
+    [self.ymLable removeFromSuperview];
 }
 
 #pragma mark - self data
@@ -299,6 +370,44 @@ CGFloat g_pickerDayWidth_ = kCalendarDayBlockWidth;
         int month = [date month];
         _endShowDate = [[[[date offsetMonth:(13 - month)] firstDayOfMonth] offsetDay:-1] convertToZeroInMorning];
     };
+}
+
+#pragma mark - tableView 
+
+- (void)stopScrollingAtOffset:(CGPoint)offset
+{
+    CGFloat tmp = fmod(offset.y, kCalendarDayBlockHeight);
+    CGFloat offsetY = offset.y;
+    
+    if (_previousOffSet.y < offsetY) {
+        NSLog(@"上划");
+        if (tmp != 0) {
+            offsetY = offsetY - tmp + kCalendarDayBlockHeight;
+        }
+        [self.tableView setContentOffset:CGPointMake(0, offsetY) animated:YES];
+    }
+    
+    else{
+        NSLog(@"下划");
+        if (tmp != 0) {
+            offsetY = offsetY + tmp - kCalendarDayBlockHeight;
+        }
+        [self.tableView setContentOffset:CGPointMake(0, offsetY) animated:YES];
+    }
+    
+    _isScrolling = NO;
+    NSArray *visibles = [self.tableView visibleCells];
+    for (XDWeekCell *cell in visibles) {
+        cell.scrolling = NO;
+    }
+    
+    [self hideTagLabel];
+}
+
+- (void)setTagLabelTextWithDate:(NSDate *)date
+{
+    int month = [date month] - 1;
+    self.ymLable.text = [NSString stringWithFormat:@"%i\n%@", [date year], [_chineseMonths objectAtIndex:month]];
 }
 
 #pragma mark - public

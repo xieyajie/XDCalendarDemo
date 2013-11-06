@@ -15,10 +15,8 @@
 }
 
 @property (nonatomic, strong) NSMutableArray *daysArray;
-
 @property (nonatomic, strong, setter = setMondayDate:) NSDate *mondayDate;
-//
-//- (void)setMonday:(NSDate *)monday;
+@property (nonatomic) BOOL scrolling;
 
 - (XDDay *)dayBlockForDate:(NSDate *)date;
 

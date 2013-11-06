@@ -17,7 +17,8 @@ typedef enum
 @protocol XDCalendarPickerDelegate;
 @interface XDCalendarPickerDemo : UIViewController
 {
-    XDCalendarStyle _style;
+    XDCalendarStyle _style;//显示样式
+    BOOL _isScrolling;//是否正在滚动
     
     NSArray *_chineseMonths;//中文月份
     NSArray *_weekSigns;//中文星期

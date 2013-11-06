@@ -47,6 +47,11 @@
     [self setDaysEditing:editing];
 }
 
+- (void)setScrolling:(BOOL)scrolling
+{
+    [self setDaysEditing:scrolling];
+}
+
 #pragma mark - private
 
 - (void)setDaysEditing:(BOOL)isEditing

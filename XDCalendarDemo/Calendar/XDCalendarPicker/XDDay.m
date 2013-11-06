@@ -33,13 +33,8 @@ typedef enum
         // Initialization code
         [self addSubview:self.dateLabel];
         [self addTarget:self action:@selector(click:) forControlEvents:UIControlEventTouchUpInside];
-//        self.titleLabel.backgroundColor = [UIColor clearColor];
-//        self.titleLabel.hidden = YES;
-//        self.titleLabel.numberOfLines = 0;
-//        self.titleLabel.textAlignment = KTextAlignmentCenter;
         
         [self addObserver:self forKeyPath:@"selected" options:NSKeyValueObservingOptionNew context:nil];
-//        [self addObserver:self forKeyPath:@"editing" options:NSKeyValueObservingOptionNew context:nil];
     }
     return self;
 }
