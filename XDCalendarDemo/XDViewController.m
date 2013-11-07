@@ -8,11 +8,11 @@
 
 #import "XDViewController.h"
 
-#import "XDCalendarPickerDemo.h"
+#import "XDCalendarPicker.h"
 
-@interface XDViewController ()
+@interface XDViewController ()<XDCalendarPickerDelegate>
 
-@property (strong, nonatomic) XDCalendarPickerDemo *calendarPicker;
+@property (strong, nonatomic) XDCalendarPicker *calendarPicker;
 
 @end
 
@@ -39,13 +39,29 @@
 
 #pragma mark - getting
 
-- (XDCalendarPickerDemo *)calendarPicker
+- (XDCalendarPicker *)calendarPicker
 {
     if (_calendarPicker == nil) {
-        _calendarPicker = [[XDCalendarPickerDemo alloc] initWithPoint:CGPointMake(0, 20) calendarStyle:XDCalendarStyleOneWeek selectedDate:[NSDate date]];
+        _calendarPicker = [[XDCalendarPicker alloc] initWithPoint:CGPointMake(0, 20) calendarStyle:XDCalendarStyleOneWeek selectedDate:[NSDate date]];
+        _calendarPicker.delegate = self;
     }
     
     return _calendarPicker;
 }
+
+#pragma mark - XDCalendarPickerDelegate
+
+- (void)calendarPicker:(XDCalendarPicker *)calendarPicker selectedDate:(NSDate *)date
+{
+    
+}
+
+- (void)calendarPickerSwipeDown:(XDCalendarPicker *)calendarPicker
+{
+    self.calendarPicker.style = XDCalendarStyleDays;
+}
+
+#pragma mark - data
+
 
 @end

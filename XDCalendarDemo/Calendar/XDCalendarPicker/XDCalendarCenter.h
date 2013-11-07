@@ -8,10 +8,13 @@
 
 #import <Foundation/Foundation.h>
 
+@class XDDay;
 @interface XDCalendarCenter : NSObject
 
 + (id)defaultCenter;
 
 @property (nonatomic, strong) NSDate *activityDate;
+@property (nonatomic, strong) XDDay *activityDay;
+@property (nonatomic, strong) NSMutableDictionary *dotViews;
 
 @end

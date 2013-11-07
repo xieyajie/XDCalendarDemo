@@ -9,19 +9,17 @@
 #import <UIKit/UIKit.h>
 
 @interface XDDay : UIButton
+{
+    UIView *_dotView;
+}
 
 @property (nonatomic, strong, setter = setBlockDate:) NSDate *blockDate;
 
 @property (nonatomic, strong) UILabel *dateLabel;
 
-@property (nonatomic, strong) UILabel *ownDotLabel;
-
-@property (nonatomic, strong) UILabel *friendDotLabel;
-
 @property (nonatomic, assign) BOOL scrolling;
 
-//@property (nonatomic, assign, setter = setState:) XDDayBlockState state;
-
-- (void)setDot;
+//刷新标记view
+- (void)refreshDotView;
 
 @end
